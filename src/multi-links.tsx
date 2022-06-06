@@ -54,6 +54,7 @@ export default function() {
                 <List.Item key={link.name} title={link.name} actions={
                     <ActionPanel>
                         <Action title="Select" onAction={() => openLinks(link)} />
+                        <Action.Push title="Edit" target={<CreateForm data={link} />} />
                         <Action title="Delete" onAction={() => deleteLink(index)} />
                     </ActionPanel>
                 } />)

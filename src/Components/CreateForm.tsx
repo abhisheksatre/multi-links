@@ -4,10 +4,12 @@ import { ActionPanel, Action } from "@raycast/api";
 import Service from './../Service';
 
 
-function CreateForm() {
+function CreateForm(props: { data?: Service.LinkItem }) {
    
     const nameFieldRef = useRef<Form.TextField>(null);
     const linksFieldRef = useRef<Form.TextArea>(null);
+    const initialValues = props.data ?? { name: '', links: '' };
+    const mode = props.data ? 'edit' : 'create';
 
     async function handleSubmit(values: Service) {
         
@@ -21,26 +23,38 @@ function CreateForm() {
             return;
         }
 
-        await Service.setLink(values);
-        showToast({ title: "Link Created" });
-        nameFieldRef.current?.reset();
-        linksFieldRef.current?.reset();
+        if (mode === 'create') {
+            values.id = Math.random().toString(36).replace('0.','');
+            await Service.setLink(values);
+            showToast({ title: "Multilink Created" });
+            nameFieldRef.current?.reset();
+            linksFieldRef.current?.reset();
+        } else {
+            const success = await Service.updateLink(props.data.id, values);
+            if (success) {
+                showToast({ title: "Multilink Updated" });
+            } else {
+                showToast({ title: "Update failed" });
+            }
+        }
+        
     }
 
     return (
         <Form
         actions={
             <ActionPanel>
-            <Action.SubmitForm title="Create Multilink" onSubmit={handleSubmit} />
+            <Action.SubmitForm title={`${mode === 'create' ? 'Create' : 'Update' } Multilink`} onSubmit={handleSubmit} />
             </ActionPanel>
         }
         >
-            <Form.TextField id="name" title="Name" placeholder="Multilink name" ref={nameFieldRef} />
+            <Form.TextField id="name" title="Name" defaultValue={initialValues.name} placeholder={`Multilink name ${props.index}`} ref={nameFieldRef} />
             
             <Form.TextArea 
                 title="Links"
                 id="links" 
                 placeholder="List of links (one per line)"
+                defaultValue={initialValues.links}
                 ref={linksFieldRef}
                 />
             

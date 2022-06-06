@@ -1,6 +1,7 @@
 import { LocalStorage } from "@raycast/api";
 
 interface LinkItem {
+    id: string,
     name: string;
     links: string;
     browser: string;
@@ -19,6 +20,19 @@ class Service {
         await LocalStorage.setItem("links", JSON.stringify(links));
         
         return links;
+    }
+
+    static async updateLink(id: string, item: LinkItem) {
+        const links = await this.getLinks();
+        const index = links.findIndex(link => link.id === id);
+        if (index !== -1) {
+            links[index] = item;
+            await LocalStorage.setItem("links", JSON.stringify(links));
+
+            return true;
+        }
+
+        return false;
     }
 
     static async deleteLink(index) {
