@@ -2,10 +2,11 @@ import { ActionPanel, Action, open, List, confirmAlert, Alert, showToast, Toast,
 import { useState, useEffect } from "react";
 import Service from './Service';
 import CreateForm from './Components/CreateForm';
+import { LinkItem } from "./types";
 
 export default function() {  
 
-    const [links, setLinks] = useState([]);
+    const [links, setLinks] = useState<LinkItem[]>([]);
 
     const fetchLinks = async function() {
         const links = await Service.getLinks();
@@ -17,13 +18,13 @@ export default function() {
     }, []);
     
 
-    function openLinks(linkItem: Service.LinkItem) {
+    function openLinks(linkItem: LinkItem) {
         linkItem.links.split('\n').forEach(link => {
-            open(link, link.browser);    
+            open(link, linkItem.browser);    
         })
     }
 
-    async function deleteLink(index) {
+    async function deleteLink(index: number) {
 
         const options: Alert.Options = {
             title: "Are you sure?",
