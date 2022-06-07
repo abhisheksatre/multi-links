@@ -50,7 +50,14 @@ function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
             </ActionPanel>
         }
         >
-            <Form.TextField id="name" title="Name" defaultValue={initialValues.name} placeholder="Multilink name" ref={nameFieldRef} />
+            <Form.TextField 
+                id="name" 
+                title="Name" 
+                defaultValue={initialValues.name} 
+                placeholder="Multilink name" 
+                ref={nameFieldRef} 
+                autoFocus={true}
+                />
             
             <Form.TextArea 
                 title="Links"
