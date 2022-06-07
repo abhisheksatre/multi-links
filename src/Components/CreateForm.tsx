@@ -1,14 +1,15 @@
-import { Form, ActionPanel, Action, showToast, Toast } from "@raycast/api";
-import { useRef } from "react";
+import { Form, ActionPanel, Action, showToast, Toast, getApplications, Application } from "@raycast/api";
+import { useRef, useEffect, useState } from "react";
 import { LinkItem } from "../types";
 import Service from './../Service';
 
 
 function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
    
+    const [browsers, setBrowsers] = useState<Application[]>([]);
     const nameFieldRef = useRef<Form.TextField>(null);
     const linksFieldRef = useRef<Form.TextArea>(null);
-    const initialValues = props.data ?? { name: '', links: '', id: '', browser: '' };
+    const initialValues = props.data ?? { name: '', links: '', id: '', browser: 'com.google.Chrome' };
     const mode = props.data ? 'edit' : 'create';
 
     async function handleSubmit(values: LinkItem) {
@@ -42,6 +43,20 @@ function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
         
     }
 
+    useEffect(() => {
+        (async ()=>{
+            const installedApplications = await getApplications();
+            
+            const browserIds = ['com.google.Chrome', 'com.apple.Safari', 'com.brave.Browser']
+            
+            const browsers = installedApplications.filter(app => browserIds.includes(String(app.bundleId)));
+
+            setBrowsers(browsers)
+
+        })()
+        
+    });
+
     return (
         <Form
         actions={
@@ -68,9 +83,9 @@ function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
                 />
             
             <Form.Dropdown id="browser" title="Open with" defaultValue={initialValues.browser}>
-                <Form.Dropdown.Item value="com.google.Chrome" title="Google Chrome" />
-                <Form.Dropdown.Item value="com.apple.Safari" title="Safari" />
-                <Form.Dropdown.Item value="com.brave.Browser" title="Brave Browser" />
+                {
+                    browsers.map(app => <Form.Dropdown.Item key={app.bundleId} value={String(app.bundleId)} title={app.name} />)
+                }
             </Form.Dropdown>
             
         </Form>
