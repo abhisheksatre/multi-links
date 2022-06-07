@@ -4,7 +4,7 @@ import { ActionPanel, Action } from "@raycast/api";
 import Service from './../Service';
 
 
-function CreateForm(props: { data?: Service.LinkItem }) {
+function CreateForm(props: { data?: Service.LinkItem; onCreate?: () => void }) {
    
     const nameFieldRef = useRef<Form.TextField>(null);
     const linksFieldRef = useRef<Form.TextArea>(null);
@@ -29,12 +29,14 @@ function CreateForm(props: { data?: Service.LinkItem }) {
             showToast({ title: "Multilink Created" });
             nameFieldRef.current?.reset();
             linksFieldRef.current?.reset();
+            props.onCreate?.();
         } else {
-            const success = await Service.updateLink(props.data.id, values);
+            const success = await Service.updateLink(props.data.id, {...props.data, ...values});
             if (success) {
                 showToast({ title: "Multilink Updated" });
+                props.onCreate?.();
             } else {
-                showToast({ title: "Update failed" });
+                showToast({ title: "Update failed", style: Toast.Style.Failure});
             }
         }
         
@@ -58,7 +60,7 @@ function CreateForm(props: { data?: Service.LinkItem }) {
                 ref={linksFieldRef}
                 />
             
-            <Form.Dropdown id="browser" title="Open with">
+            <Form.Dropdown id="browser" title="Open with" defaultValue={initialValues.browser}>
                 <Form.Dropdown.Item value="com.google.Chrome" title="Google Chrome" />
                 <Form.Dropdown.Item value="com.apple.Safari" title="Safari" />
                 <Form.Dropdown.Item value="com.brave.Browser" title="Brave Browser" />

@@ -7,14 +7,14 @@ export default function() {
 
     const [links, setLinks] = useState([]);
 
-    async function fetchLinks() {
+    const fetchLinks = async function() {
         const links = await Service.getLinks();
         setLinks([...links]);
     }
 
     useEffect(() => {
         fetchLinks();
-      }, []);
+    }, []);
     
 
     function openLinks(linkItem: Service.LinkItem) {
@@ -45,7 +45,7 @@ export default function() {
     <List
         actions={
             <ActionPanel>
-                <Action.Push title="Create Link" target={<CreateForm />} />
+                <Action.Push title="Create Link" target={<CreateForm onCreate={fetchLinks} />} />
             </ActionPanel>
         }
     >
@@ -54,7 +54,7 @@ export default function() {
                 <List.Item key={link.name} title={link.name} actions={
                     <ActionPanel>
                         <Action title="Select" onAction={() => openLinks(link)} />
-                        <Action.Push title="Edit" target={<CreateForm data={link} />} />
+                        <Action.Push title="Edit" target={<CreateForm data={link} onCreate={fetchLinks} />} />
                         <Action title="Delete" onAction={() => deleteLink(index)} />
                     </ActionPanel>
                 } />)
