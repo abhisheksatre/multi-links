@@ -6,7 +6,7 @@ import Service from './../Service';
 
 function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
    
-    const [browsers, setBrowsers] = useState<Application[]>([]);
+    const [browsers, setBrowsers] = useState<Application[]>([{ name: "Google Chrome", bundleId: "com.google.Chrome", path: "" }]);
     const nameFieldRef = useRef<Form.TextField>(null);
     const linksFieldRef = useRef<Form.TextArea>(null);
     const initialValues = props.data ?? { name: '', links: '', id: '', browser: 'com.google.Chrome' };
