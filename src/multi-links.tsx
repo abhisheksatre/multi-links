@@ -1,4 +1,4 @@
-import { ActionPanel, Action, open, List, confirmAlert, AlertActionStyle, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, open, List, confirmAlert, Alert, showToast, Toast } from "@raycast/api";
 import { useState, useEffect } from "react";
 import Service from './Service';
 import CreateForm from './Components/CreateForm';
@@ -29,7 +29,7 @@ export default function() {
             title: "Are you sure?",
             primaryAction: {
               title: "Confirm",
-              style: AlertActionStyle.Destructive,
+              style: Alert.ActionStyle.Destructive,
               onAction: async () => {
                 await Service.deleteLink(index)
                 fetchLinks()
