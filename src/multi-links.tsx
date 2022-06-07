@@ -1,4 +1,4 @@
-import { ActionPanel, Action, open, List, confirmAlert, Alert, showToast, Toast } from "@raycast/api";
+import { ActionPanel, Action, open, List, confirmAlert, Alert, showToast, Toast, Icon } from "@raycast/api";
 import { useState, useEffect } from "react";
 import Service from './Service';
 import CreateForm from './Components/CreateForm';
@@ -53,9 +53,22 @@ export default function() {
             links.map((link, index) =>
                 <List.Item key={link.name} title={link.name} actions={
                     <ActionPanel>
-                        <Action title="Select" onAction={() => openLinks(link)} />
-                        <Action.Push title="Edit" target={<CreateForm data={link} onCreate={fetchLinks} />} />
-                        <Action title="Delete" onAction={() => deleteLink(index)} />
+                        <Action 
+                            title="Select" 
+                            onAction={() => openLinks(link)} 
+                            icon={{ source: Icon.Globe }}
+                            />
+                        <Action.Push 
+                            title="Edit" 
+                            target={<CreateForm data={link} 
+                            onCreate={fetchLinks} />} 
+                            icon={{ source: Icon.Pencil }}
+                            />
+                        <Action 
+                            title="Delete" 
+                            onAction={() => deleteLink(index)} 
+                            icon={{ source: Icon.Trash }}
+                            />
                     </ActionPanel>
                 } />)
         }
