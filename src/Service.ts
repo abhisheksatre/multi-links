@@ -1,30 +1,22 @@
 import { LocalStorage } from "@raycast/api";
-
-interface LinkItem {
-    id: string,
-    name: string;
-    links: string;
-    browser: string;
-}
+import { LinkItem } from "./types";
 
 class Service {
 
     static async getLinks() {
         const links = await LocalStorage.getItem("links");
-        return links ? JSON.parse(links) : [];
+        return links ? JSON.parse(String(links)) : [];
     }
   
-    static async setLink(item: LinkItem): LinkItem[] {
+    static async setLink(item: LinkItem) {
         const links = await this.getLinks();
         links.push(item);
         await LocalStorage.setItem("links", JSON.stringify(links));
-        
-        return links;
     }
 
     static async updateLink(id: string, item: LinkItem) {
         const links = await this.getLinks();
-        const index = links.findIndex(link => link.id === id);
+        const index = links.findIndex((link: LinkItem) => link.id === id);
         if (index !== -1) {
             links[index] = item;
             await LocalStorage.setItem("links", JSON.stringify(links));
@@ -35,7 +27,7 @@ class Service {
         return false;
     }
 
-    static async deleteLink(index) {
+    static async deleteLink(index: number) {
         const links = await this.getLinks();
         links.splice(index, 1);
         await LocalStorage.setItem("links", JSON.stringify(links));
@@ -45,4 +37,3 @@ class Service {
 }
 
 export default Service;
-export type { LinkItem };
