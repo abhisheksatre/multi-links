@@ -1,17 +1,17 @@
 import { Form, ActionPanel, Action, showToast, Toast } from "@raycast/api";
 import { useRef } from "react";
-import { ActionPanel, Action } from "@raycast/api";
+import { LinkItem } from "../types";
 import Service from './../Service';
 
 
-function CreateForm(props: { data?: Service.LinkItem; onCreate?: () => void }) {
+function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
    
     const nameFieldRef = useRef<Form.TextField>(null);
     const linksFieldRef = useRef<Form.TextArea>(null);
-    const initialValues = props.data ?? { name: '', links: '' };
+    const initialValues = props.data ?? { name: '', links: '', id: '', browser: '' };
     const mode = props.data ? 'edit' : 'create';
 
-    async function handleSubmit(values: Service) {
+    async function handleSubmit(values: LinkItem) {
         
         if (values.name.trim() === '') {
             await showToast({ style: Toast.Style.Failure, title: "Name is required" });
@@ -31,7 +31,7 @@ function CreateForm(props: { data?: Service.LinkItem; onCreate?: () => void }) {
             linksFieldRef.current?.reset();
             props.onCreate?.();
         } else {
-            const success = await Service.updateLink(props.data.id, {...props.data, ...values});
+            const success = await Service.updateLink(initialValues.id, {...props.data, ...values});
             if (success) {
                 showToast({ title: "Multilink Updated" });
                 props.onCreate?.();
@@ -50,7 +50,7 @@ function CreateForm(props: { data?: Service.LinkItem; onCreate?: () => void }) {
             </ActionPanel>
         }
         >
-            <Form.TextField id="name" title="Name" defaultValue={initialValues.name} placeholder={`Multilink name ${props.index}`} ref={nameFieldRef} />
+            <Form.TextField id="name" title="Name" defaultValue={initialValues.name} placeholder="Multilink name" ref={nameFieldRef} />
             
             <Form.TextArea 
                 title="Links"
