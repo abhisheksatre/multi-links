@@ -2,6 +2,7 @@ import { Form, ActionPanel, Action, showToast, Toast, getApplications, Applicati
 import { useRef, useEffect, useState } from "react";
 import { LinkItem } from "../types";
 import Service from './../Service';
+import MultiLinks from '../multi-links';
 
 
 function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
@@ -11,7 +12,7 @@ function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
     const linksFieldRef = useRef<Form.TextArea>(null);
     const initialValues = props.data ?? { name: '', links: '', id: '', browser: 'com.google.Chrome' };
     const mode = props.data ? 'edit' : 'create';
-    const { pop } = useNavigation();
+    const { pop, push } = useNavigation();
     let updateBrowserList = true;
 
     async function handleSubmit(values: LinkItem) {
@@ -33,6 +34,13 @@ function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
             nameFieldRef.current?.reset();
             linksFieldRef.current?.reset();
             props.onCreate?.();
+
+            if (props.onCreate) {
+                pop();
+            } else {
+                push(<MultiLinks/>);
+            }
+
         } else {
             const success = await Service.updateLink(initialValues.id, {...props.data, ...values});
             if (success) {
