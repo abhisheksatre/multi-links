@@ -1,4 +1,4 @@
-import { Form, ActionPanel, Action, showToast, Toast, getApplications, Application } from "@raycast/api";
+import { Form, ActionPanel, Action, showToast, Toast, getApplications, Application, useNavigation } from "@raycast/api";
 import { useRef, useEffect, useState } from "react";
 import { LinkItem } from "../types";
 import Service from './../Service';
@@ -11,6 +11,8 @@ function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
     const linksFieldRef = useRef<Form.TextArea>(null);
     const initialValues = props.data ?? { name: '', links: '', id: '', browser: 'com.google.Chrome' };
     const mode = props.data ? 'edit' : 'create';
+    const { pop } = useNavigation();
+    let updateBrowserList = true;
 
     async function handleSubmit(values: LinkItem) {
         
@@ -36,6 +38,7 @@ function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
             if (success) {
                 showToast({ title: "Multilink Updated" });
                 props.onCreate?.();
+                pop();
             } else {
                 showToast({ title: "Update failed", style: Toast.Style.Failure});
             }
@@ -51,9 +54,15 @@ function CreateForm(props: { data?: LinkItem; onCreate?: () => void }) {
             
             const browsers = installedApplications.filter(app => browserIds.includes(String(app.bundleId)));
 
-            setBrowsers(browsers)
-
+            if (updateBrowserList) {
+                setBrowsers(browsers);
+            }
+            
         })()
+
+        return () => {            
+            updateBrowserList = false;
+        };
         
     });
 
